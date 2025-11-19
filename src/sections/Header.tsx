@@ -41,6 +41,12 @@ export default function Header() {
         const productsRes = await fetch("/api/shopify/products?first=12");
         const productsData = await productsRes.json();
         
+        // Check for API errors
+        if (productsData.error) {
+          console.error("Shopify Products API Error:", productsData.error, productsData.message, productsData.details);
+          return;
+        }
+        
         // Handle both response structures: { products: {...} } or { data: { products: {...} } }
         const products = productsData.data?.products || productsData.products;
         if (products?.edges) {
@@ -48,11 +54,20 @@ export default function Header() {
             (edge: any) => edge.node
           );
           setProducts(productList);
+          console.log("✅ Products loaded:", productList.length);
+        } else {
+          console.warn("⚠️ No products found in response:", productsData);
         }
 
         // Fetch collections
         const collectionsRes = await fetch("/api/shopify/collections?first=5");
         const collectionsData = await collectionsRes.json();
+        
+        // Check for API errors
+        if (collectionsData.error) {
+          console.error("Shopify Collections API Error:", collectionsData.error, collectionsData.message, collectionsData.details);
+          return;
+        }
         
         // Handle both response structures
         const collections = collectionsData.data?.collections || collectionsData.collections;
@@ -66,9 +81,12 @@ export default function Header() {
             })
           );
           setCollections(collectionList);
+          console.log("✅ Collections loaded:", collectionList.length);
+        } else {
+          console.warn("⚠️ No collections found in response:", collectionsData);
         }
       } catch (error) {
-        console.error("Error fetching Shopify data:", error);
+        console.error("❌ Error fetching Shopify data:", error);
       } finally {
         setIsLoading(false);
       }
