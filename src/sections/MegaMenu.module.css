@@ -1,0 +1,60 @@
+/* Mega Menu Swiper Styles */
+.mega-menu-products-swiper {
+  padding: 0 20px !important;
+  overflow: visible !important;
+}
+
+.mega-menu-desktop-swiper {
+  padding: 0 20px !important;
+  overflow: visible !important;
+}
+
+.mega-menu-mobile-products-swiper {
+  padding: 0 !important;
+  overflow: visible !important;
+  width: 100% !important;
+}
+
+.mega-menu-products-swiper .swiper-slide {
+  height: auto;
+}
+
+.mega-menu-desktop-swiper .swiper-slide {
+  height: auto;
+}
+
+/* Navigation Buttons */
+.mega-menu-swiper-prev,
+.mega-menu-swiper-next,
+.mega-menu-desktop-swiper-prev,
+.mega-menu-desktop-swiper-next {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mega-menu-swiper-prev:hover,
+.mega-menu-swiper-next:hover,
+.mega-menu-desktop-swiper-prev:hover,
+.mega-menu-desktop-swiper-next:hover {
+  transform: scale(1.1);
+}
+
+.mega-menu-swiper-prev:active,
+.mega-menu-swiper-next:active,
+.mega-menu-desktop-swiper-prev:active,
+.mega-menu-desktop-swiper-next:active {
+  transform: scale(0.95);
+}
+
+/* Disable navigation buttons when swiper is at start/end */
+.mega-menu-products-swiper.swiper-button-disabled,
+.mega-menu-desktop-swiper.swiper-button-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .mega-menu-products-swiper {
+    padding: 0 10px !important;
+  }
+}
+

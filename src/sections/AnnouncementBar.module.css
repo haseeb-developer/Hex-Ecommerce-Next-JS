@@ -1,0 +1,34 @@
+.announcementSwiperWrapper {
+  width: 100%;
+  padding: 0 40px;
+  overflow: hidden;
+}
+
+.announcementSwiper {
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.announcementSwiperSlide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.announcementSwiperSlide p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .announcementSwiperWrapper {
+    padding: 0 30px;
+  }
+}
+
