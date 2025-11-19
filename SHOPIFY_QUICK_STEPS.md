@@ -38,7 +38,7 @@
 ## Step 4: Get Your Access Token
 
 1. After installing, you'll see your **Storefront API access token**
-2. It will look something like: `shpat_1234567890abcdef...` or `shpca_1234567890...`
+2. It will be a long string starting with `shpat_` or `shpca_`
 3. **COPY THIS TOKEN** - you'll need it in the next step
 4. ⚠️ **Important**: Copy the **Storefront API** token, NOT the Admin API token
 
