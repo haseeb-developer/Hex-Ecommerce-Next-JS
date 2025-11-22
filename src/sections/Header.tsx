@@ -23,8 +23,10 @@ export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
+  const [pages, setPages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAnnouncementBarVisible, setIsAnnouncementBarVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { openCart, getTotalItems } = useCartStore();
   const totalItems = getTotalItems();
   const megaMenuRef = useRef<HTMLDivElement>(null);
@@ -37,8 +39,13 @@ export default function Header() {
       try {
         setIsLoading(true);
         
-        // Fetch products
-        const productsRes = await fetch("/api/shopify/products?first=12");
+        // Fetch products with cache-busting to ensure fresh data
+        const productsRes = await fetch("/api/shopify/products?first=24", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
         const productsData = await productsRes.json();
         
         // Check for API errors
@@ -59,8 +66,13 @@ export default function Header() {
           console.warn("⚠️ No products found in response:", productsData);
         }
 
-        // Fetch collections
-        const collectionsRes = await fetch("/api/shopify/collections?first=5");
+        // Fetch collections with cache-busting
+        const collectionsRes = await fetch("/api/shopify/collections?first=10", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
         const collectionsData = await collectionsRes.json();
         
         // Check for API errors
@@ -85,6 +97,34 @@ export default function Header() {
         } else {
           console.warn("⚠️ No collections found in response:", collectionsData);
         }
+
+        // Fetch pages with cache-busting
+        try {
+          const pagesRes = await fetch("/api/shopify/pages?first=10", {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          });
+          const pagesData = await pagesRes.json();
+          
+          if (!pagesData.error) {
+            const pages = pagesData.data?.pages || pagesData.pages;
+            if (pages?.edges) {
+              const pageList = pages.edges.map(
+                (edge: any) => ({
+                  id: edge.node.id,
+                  title: edge.node.title,
+                  handle: edge.node.handle,
+                })
+              );
+              setPages(pageList);
+              console.log("✅ Pages loaded:", pageList.length);
+            }
+          }
+        } catch (error) {
+          console.warn("⚠️ Pages not available:", error);
+        }
       } catch (error) {
         console.error("❌ Error fetching Shopify data:", error);
       } finally {
@@ -93,6 +133,25 @@ export default function Header() {
     };
 
     fetchShopifyData();
+
+    // Refresh data when page becomes visible (user returns to tab)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchShopifyData();
+      }
+    };
+
+    // Refresh data periodically (every 5 minutes) as fallback
+    const refreshInterval = setInterval(() => {
+      fetchShopifyData();
+    }, 5 * 60 * 1000); // 5 minutes
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(refreshInterval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   // Close mega menu when clicking outside
@@ -117,6 +176,21 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMegaMenuOpen]);
+
+  // Check scroll position for sticky header spacing
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 50); // Trigger after 50px scroll
+    };
+
+    handleScroll(); // Initial check
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // Check if announcement bar is visible
   useEffect(() => {
@@ -219,8 +293,19 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-gray-200" style={{ backgroundColor: "#F8F5F0" }}>
-        <div className="page-width">
+      <motion.header 
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+        className="sticky z-50 border border-gray-200 rounded-2xl shadow-sm transition-all duration-300 ease-out" 
+        style={{ 
+          backgroundColor: "#F8F5F0",
+          margin: "0 20px 20px 20px",
+          padding: "0 20px",
+          top: isScrolled ? "20px" : "0px",
+        }}
+      >
+        <div className="w-full">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Mobile Menu Button */}
             <button
@@ -278,7 +363,24 @@ export default function Header() {
                   whileTap={{ scale: 0.95 }}
                   className="text-2xl md:text-3xl font-bold text-black"
                 >
-                  HEX
+                  <svg width="150" height="120" viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+ 
+                  <text x="50%" y="50" textAnchor="middle" dominantBaseline="middle"
+                        fontFamily="Poppins, sans-serif" fontWeight="900" fontSize="60"
+                        fill="url(#textGradient)">
+                    HEX
+                  </text>
+
+                  <path d="M50 90 C100 110, 200 70, 250 95" stroke="#ff00ff" strokeWidth="4" fill="transparent" strokeLinecap="round" strokeLinejoin="round"/>
+
+                  <defs>
+                    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#00ffff"/>
+                      <stop offset="100%" stopColor="#ff00ff"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+
                 </motion.div>
               </Link>
             </div>
@@ -315,9 +417,8 @@ export default function Header() {
               </button>
             </div>
           </div>
-
         </div>
-      </header>
+      </motion.header>
 
       {/* Mobile Menu Sidebar - Full Width & Height */}
       <AnimatePresence>
@@ -397,7 +498,9 @@ export default function Header() {
           onClose={() => setIsMegaMenuOpen(false)}
           products={products}
           collections={collections}
+          pages={pages}
           isAnnouncementBarVisible={isAnnouncementBarVisible}
+          isScrolled={isScrolled}
         />
       </div>
 

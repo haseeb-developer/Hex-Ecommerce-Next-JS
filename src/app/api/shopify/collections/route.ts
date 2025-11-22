@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { shopifyClient, GET_COLLECTIONS } from "@/lib/shopify";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -10,7 +13,11 @@ export async function GET(request: Request) {
       first,
     });
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    });
   } catch (error: any) {
     console.error("Shopify API Error:", error);
     return NextResponse.json(

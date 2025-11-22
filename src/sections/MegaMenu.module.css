@@ -5,8 +5,13 @@
 }
 
 .mega-menu-desktop-swiper {
-  padding: 0 20px !important;
-  overflow: visible !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  width: 100% !important;
+}
+
+.mega-menu-desktop-swiper .swiper-wrapper {
+  width: 100% !important;
 }
 
 .mega-menu-mobile-products-swiper {

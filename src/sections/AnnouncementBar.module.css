@@ -1,6 +1,6 @@
 .announcementSwiperWrapper {
   width: 100%;
-  padding: 0 40px;
+  padding: 0 20px;
   overflow: hidden;
 }
 
@@ -28,7 +28,7 @@
 
 @media (max-width: 640px) {
   .announcementSwiperWrapper {
-    padding: 0 30px;
+    padding: 0 10px;
   }
 }
 

@@ -125,6 +125,65 @@ export const GET_COLLECTIONS = `
   }
 `;
 
+export const GET_PAGES = `
+  query getPages($first: Int!) {
+    pages(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCTS_BY_COLLECTION = `
+  query getProductsByCollection($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
+      id
+      title
+      handle
+      products(first: $first) {
+        edges {
+          node {
+            id
+            title
+            handle
+            description
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  price {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 // Type definitions
 export interface ShopifyProduct {
   id: string;
