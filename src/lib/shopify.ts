@@ -8,17 +8,17 @@ const SHOPIFY_STOREFRONT_ACCESS_TOKEN =
 // Validate configuration
 if (!SHOPIFY_STORE_DOMAIN) {
   console.error("⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN is not set");
+  throw new Error("NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN environment variable is required");
 }
 if (!SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
   console.error("⚠️ NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN is not set");
+  throw new Error("NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN environment variable is required");
 }
 
 const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`;
 
-// Log endpoint for debugging (remove in production)
-if (process.env.NODE_ENV === "development") {
-  console.log("🔗 Shopify Endpoint:", endpoint);
-}
+// Log endpoint for debugging
+console.log("🔗 Shopify Endpoint:", endpoint.replace(SHOPIFY_STOREFRONT_ACCESS_TOKEN, "***"));
 
 export const shopifyClient = new GraphQLClient(endpoint, {
   headers: {

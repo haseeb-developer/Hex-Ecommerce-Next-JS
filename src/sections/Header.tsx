@@ -50,11 +50,19 @@ export default function Header() {
             "Cache-Control": "no-cache",
           },
         });
+        
+        if (!productsRes.ok) {
+          console.error("Products API request failed:", productsRes.status, productsRes.statusText);
+          setIsLoading(false);
+          return;
+        }
+        
         const productsData = await productsRes.json();
         
         // Check for API errors
         if (productsData.error) {
           console.error("Shopify Products API Error:", productsData.error, productsData.message, productsData.details);
+          setIsLoading(false);
           return;
         }
         
@@ -68,6 +76,7 @@ export default function Header() {
           console.log("✅ Products loaded:", productList.length);
         } else {
           console.warn("⚠️ No products found in response:", productsData);
+          setProducts([]);
         }
 
         // Fetch collections with cache-busting
@@ -77,11 +86,19 @@ export default function Header() {
             "Cache-Control": "no-cache",
           },
         });
+        
+        if (!collectionsRes.ok) {
+          console.error("Collections API request failed:", collectionsRes.status, collectionsRes.statusText);
+          setIsLoading(false);
+          return;
+        }
+        
         const collectionsData = await collectionsRes.json();
         
         // Check for API errors
         if (collectionsData.error) {
           console.error("Shopify Collections API Error:", collectionsData.error, collectionsData.message, collectionsData.details);
+          setIsLoading(false);
           return;
         }
         
@@ -100,6 +117,7 @@ export default function Header() {
           console.log("✅ Collections loaded:", collectionList.length);
         } else {
           console.warn("⚠️ No collections found in response:", collectionsData);
+          setCollections([]);
         }
 
         // Fetch pages with cache-busting

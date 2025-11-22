@@ -13,11 +13,15 @@ export async function GET(request: Request) {
       first,
     });
 
-    return NextResponse.json(data, {
-      headers: {
-        'Cache-Control': 'no-store, max-age=0',
-      },
-    });
+    // Return data in consistent format
+    return NextResponse.json(
+      { data },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      }
+    );
   } catch (error: any) {
     console.error("Shopify API Error:", error);
     console.error("Error details:", {
