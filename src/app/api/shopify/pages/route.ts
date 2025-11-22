@@ -6,6 +6,22 @@ export const revalidate = 0;
 
 export async function GET(request: Request) {
   try {
+    // Check environment variables
+    if (!process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || !process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+      return NextResponse.json(
+        {
+          pages: {
+            edges: []
+          }
+        },
+        {
+          headers: {
+            'Cache-Control': 'no-store, max-age=0',
+          },
+        }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const first = parseInt(searchParams.get("first") || "10");
 

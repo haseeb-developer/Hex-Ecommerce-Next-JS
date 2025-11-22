@@ -5,27 +5,40 @@ const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "";
 const SHOPIFY_STOREFRONT_ACCESS_TOKEN =
   process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN || "";
 
-// Validate configuration
-if (!SHOPIFY_STORE_DOMAIN) {
-  console.error("⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN is not set");
-  throw new Error("NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN environment variable is required");
+// Helper function to validate and get Shopify client
+function getShopifyClient() {
+  if (!SHOPIFY_STORE_DOMAIN) {
+    throw new Error("NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN environment variable is required");
+  }
+  if (!SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+    throw new Error("NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN environment variable is required");
+  }
+
+  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`;
+
+  return new GraphQLClient(endpoint, {
+    headers: {
+      "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+      "Content-Type": "application/json",
+    },
+  });
 }
-if (!SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-  console.error("⚠️ NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN is not set");
-  throw new Error("NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN environment variable is required");
-}
 
-const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`;
-
-// Log endpoint for debugging
-console.log("🔗 Shopify Endpoint:", endpoint.replace(SHOPIFY_STOREFRONT_ACCESS_TOKEN, "***"));
-
-export const shopifyClient = new GraphQLClient(endpoint, {
-  headers: {
-    "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    "Content-Type": "application/json",
-  },
-});
+// Create client lazily (only when needed, not at module load time)
+export const shopifyClient = (() => {
+  // Only validate and create client if env vars are present
+  if (SHOPIFY_STORE_DOMAIN && SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+    return getShopifyClient();
+  }
+  // Return a proxy that will throw when actually used
+  return new Proxy({} as GraphQLClient, {
+    get() {
+      throw new Error(
+        "Shopify client not configured. Please set NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN environment variables."
+      );
+    },
+  });
+})();
 
 // GraphQL Queries
 export const GET_PRODUCTS = `
