@@ -24,6 +24,16 @@ function getShopifyClient() {
   });
 }
 
+// Create client function that validates and creates client on demand
+export function getShopifyClientInstance() {
+  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+    throw new Error(
+      "Shopify client not configured. Please set NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN environment variables."
+    );
+  }
+  return getShopifyClient();
+}
+
 // Create client lazily (only when needed, not at module load time)
 export const shopifyClient = (() => {
   // Only validate and create client if env vars are present

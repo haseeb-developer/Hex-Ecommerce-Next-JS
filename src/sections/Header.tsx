@@ -44,6 +44,7 @@ export default function Header() {
         setIsLoading(true);
         
         // Fetch products with cache-busting to ensure fresh data
+        console.log("🔄 Fetching products from API...");
         const productsRes = await fetch("/api/shopify/products?first=24", {
           cache: "no-store",
           headers: {
@@ -52,34 +53,40 @@ export default function Header() {
         });
         
         if (!productsRes.ok) {
-          console.error("Products API request failed:", productsRes.status, productsRes.statusText);
+          const errorText = await productsRes.text();
+          console.error("❌ Products API request failed:", productsRes.status, productsRes.statusText, errorText);
+          setProducts([]);
           setIsLoading(false);
           return;
         }
         
         const productsData = await productsRes.json();
+        console.log("📦 Products API Response:", productsData);
         
         // Check for API errors
         if (productsData.error) {
-          console.error("Shopify Products API Error:", productsData.error, productsData.message, productsData.details);
+          console.error("❌ Shopify Products API Error:", productsData.error, productsData.message, productsData.details);
+          console.error("💡 Make sure NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN are set in Vercel");
+          setProducts([]);
           setIsLoading(false);
           return;
         }
         
         // Handle both response structures: { products: {...} } or { data: { products: {...} } }
         const products = productsData.data?.products || productsData.products;
-        if (products?.edges) {
+        if (products?.edges && products.edges.length > 0) {
           const productList = products.edges.map(
             (edge: any) => edge.node
           );
           setProducts(productList);
           console.log("✅ Products loaded:", productList.length);
         } else {
-          console.warn("⚠️ No products found in response:", productsData);
+          console.warn("⚠️ No products found in response. Response structure:", productsData);
           setProducts([]);
         }
 
         // Fetch collections with cache-busting
+        console.log("🔄 Fetching collections from API...");
         const collectionsRes = await fetch("/api/shopify/collections?first=10", {
           cache: "no-store",
           headers: {
@@ -88,23 +95,28 @@ export default function Header() {
         });
         
         if (!collectionsRes.ok) {
-          console.error("Collections API request failed:", collectionsRes.status, collectionsRes.statusText);
+          const errorText = await collectionsRes.text();
+          console.error("❌ Collections API request failed:", collectionsRes.status, collectionsRes.statusText, errorText);
+          setCollections([]);
           setIsLoading(false);
           return;
         }
         
         const collectionsData = await collectionsRes.json();
+        console.log("📦 Collections API Response:", collectionsData);
         
         // Check for API errors
         if (collectionsData.error) {
-          console.error("Shopify Collections API Error:", collectionsData.error, collectionsData.message, collectionsData.details);
+          console.error("❌ Shopify Collections API Error:", collectionsData.error, collectionsData.message, collectionsData.details);
+          console.error("💡 Make sure NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN are set in Vercel");
+          setCollections([]);
           setIsLoading(false);
           return;
         }
         
         // Handle both response structures
         const collections = collectionsData.data?.collections || collectionsData.collections;
-        if (collections?.edges) {
+        if (collections?.edges && collections.edges.length > 0) {
           const collectionList = collections.edges.map(
             (edge: any) => ({
               id: edge.node.id,
@@ -116,7 +128,7 @@ export default function Header() {
           setCollections(collectionList);
           console.log("✅ Collections loaded:", collectionList.length);
         } else {
-          console.warn("⚠️ No collections found in response:", collectionsData);
+          console.warn("⚠️ No collections found in response. Response structure:", collectionsData);
           setCollections([]);
         }
 
