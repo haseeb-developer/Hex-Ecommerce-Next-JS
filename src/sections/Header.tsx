@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingCart, Menu, X, ChevronDown, ChevronRight, ArrowLeft } from "lucide-react";
+import { Search, ShoppingCart, Menu, X, ChevronDown, ChevronRight, ArrowLeft, User } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import Link from "next/link";
 import CartDrawer from "./CartDrawer";
 import SearchOverlay from "./SearchOverlay";
 import MegaMenu from "./MegaMenu";
+import AccountModal from "./AccountModal";
 import { ShopifyProduct } from "@/lib/shopify";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const navigationLinks = [
   { name: "HOME", href: "/" },
@@ -21,6 +23,7 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
   const [pages, setPages] = useState<any[]>([]);
@@ -28,6 +31,7 @@ export default function Header() {
   const [isAnnouncementBarVisible, setIsAnnouncementBarVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const { openCart, getTotalItems } = useCartStore();
+  const { user, isAuthenticated } = useAuthStore();
   const totalItems = getTotalItems();
   const megaMenuRef = useRef<HTMLDivElement>(null);
   const shopButtonRef = useRef<HTMLButtonElement>(null);
@@ -385,7 +389,7 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* Search and Cart - Right */}
+            {/* Search, Account, and Cart - Right */}
             <div className="flex items-center gap-4 flex-1 justify-end">
               {/* Search */}
               <motion.button
@@ -397,6 +401,34 @@ export default function Header() {
               >
                 <Search className="w-5 h-5 text-gray-900" />
               </motion.button>
+
+              {/* Account */}
+              {isAuthenticated && user ? (
+                <Link href="/account">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label="Account"
+                  >
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center">
+                      <span className="text-white text-xs font-semibold">
+                        {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  </motion.button>
+                </Link>
+              ) : (
+                <motion.button
+                  onClick={() => setIsAccountModalOpen(true)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="Account"
+                >
+                  <User className="w-5 h-5 text-gray-900" />
+                </motion.button>
+              )}
 
               {/* Cart */}
               <button
@@ -510,6 +542,10 @@ export default function Header() {
         onSearch={handleSearch}
       />
       <CartDrawer />
+      <AccountModal
+        isOpen={isAccountModalOpen}
+        onClose={() => setIsAccountModalOpen(false)}
+      />
     </>
   );
 }

@@ -63,3 +63,28 @@
   }
 }
 
+/* Prevent scrollbar flickering in mega menu */
+.mega-menu-scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.mega-menu-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mega-menu-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mega-menu-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.mega-menu-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+

@@ -59,18 +59,24 @@ export default function HeroBanner() {
   const [swiperRef, setSwiperRef] = useState<any>(null);
   const [heroHeight, setHeroHeight] = useState<string>("calc(100vh - 200px)");
   const [isMounted, setIsMounted] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(true); // Start with true for immediate animations
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Only enable parallax on client and after mount for performance
+  // Always call hooks in the same order - never conditionally
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  // Parallax effect for background
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  // Parallax effect for background - always call useTransform (Rules of Hooks)
+  const yTransform = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   // Set mounted flag after component mounts to prevent hydration issues
   useEffect(() => {
     setIsMounted(true);
+    // Enable animations immediately for smooth page load experience
+    setShouldAnimate(true);
   }, []);
 
   // Calculate hero height dynamically
@@ -141,9 +147,9 @@ export default function HeroBanner() {
   return (
     <motion.section
       ref={containerRef}
-      initial={{ opacity: 0, y: 50 }}
+      initial={shouldAnimate ? { opacity: 0, y: 50 } : { opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+      transition={shouldAnimate ? { duration: 0.6, delay: 0.3, ease: "easeOut" } : { duration: 0 }}
       className="relative overflow-hidden rounded-2xl"
       style={{
         margin: "0 20px 20px 20px",
@@ -153,7 +159,7 @@ export default function HeroBanner() {
     >
       {/* Background Image with Parallax */}
       <motion.div
-        style={{ y }}
+        style={isMounted ? { y: yTransform } : {}}
         className="absolute inset-0 z-0"
       >
         <Swiper
@@ -163,37 +169,41 @@ export default function HeroBanner() {
           fadeEffect={{ crossFade: true }}
           slidesPerView={1}
           loop={true}
-          autoplay={isAutoplay ? { delay: 5000, disableOnInteraction: false } : false}
+          autoplay={isAutoplay ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false}
           onSlideChange={handleSlideChange}
-          speed={1000}
+          speed={800}
+          watchSlidesProgress={true}
           className={styles.heroSwiper}
         >
-          {heroSlides.map((slide) => (
+          {heroSlides.map((slide, index) => (
             <SwiperSlide key={slide.id} className={styles.heroSlide}>
               <div className="relative w-full h-full">
                 <Image
                   src={slide.image}
                   alt={slide.title}
                   fill
-                  priority={slide.id === 1}
-                  quality={90}
+                  priority={index === 0}
+                  quality={75}
                   className="object-cover"
-                  sizes="100vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1920px"
+                  loading={index === 0 ? "eager" : "lazy"}
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
-                {/* Animated Gradient Overlay */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
-                  animate={{
-                    x: ["-100%", "200%"],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 4,
-                    ease: "linear",
-                  }}
-                />
+                {/* Animated Gradient Overlay - Only animate after mount */}
+                {isMounted && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
+                    animate={{
+                      x: ["-100%", "200%"],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 4,
+                      ease: "linear",
+                    }}
+                  />
+                )}
               </div>
             </SwiperSlide>
           ))}
@@ -214,9 +224,9 @@ export default function HeroBanner() {
             >
               {/* Subtitle */}
               <motion.p
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
+                transition={shouldAnimate ? { delay: 0.1, duration: 0.5 } : { duration: 0 }}
                 className="text-sm sm:text-base md:text-lg font-medium text-white/90 uppercase tracking-widest"
               >
                 {currentSlide.subtitle}
@@ -224,9 +234,9 @@ export default function HeroBanner() {
 
               {/* Title */}
               <motion.h1
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
+                transition={shouldAnimate ? { delay: 0.2, duration: 0.5 } : { duration: 0 }}
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
                 style={{
                   textShadow: "0 4px 20px rgba(0,0,0,0.5)",
@@ -237,9 +247,9 @@ export default function HeroBanner() {
 
               {/* Description */}
               <motion.p
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.6 }}
+                transition={shouldAnimate ? { delay: 0.3, duration: 0.5 } : { duration: 0 }}
                 className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed"
               >
                 {currentSlide.description}
@@ -247,9 +257,9 @@ export default function HeroBanner() {
 
               {/* Button */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
+                transition={shouldAnimate ? { delay: 0.4, duration: 0.5 } : { duration: 0 }}
                 className="pt-4"
               >
                 <Button href={currentSlide.buttonLink} className="inline-block">
@@ -315,19 +325,19 @@ export default function HeroBanner() {
         )}
       </motion.button>
 
-      {/* Floating Elements Animation - Only render after mount to prevent hydration issues */}
-      {isMounted && (
+      {/* Floating Elements Animation - Reduced count for performance, only after mount */}
+      {isMounted && shouldAnimate && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => {
+          {[...Array(3)].map((_, i) => {
             // Use fixed values based on index to prevent hydration mismatch
-            const xPosition = ((i + 1) * 15) % 100;
-            const duration = 2 + (i % 3) * 1.5;
-            const delay = (i % 2) * 1;
+            const xPosition = ((i + 1) * 30) % 100;
+            const duration = 3 + (i % 2) * 1;
+            const delay = i * 0.5;
             
             return (
               <motion.div
                 key={i}
-                className="absolute w-2 h-2 bg-white/20 rounded-full"
+                className="absolute w-2 h-2 bg-white/15 rounded-full"
                 initial={{
                   x: `${xPosition}%`,
                   y: "100%",
@@ -335,7 +345,7 @@ export default function HeroBanner() {
                 }}
                 animate={{
                   y: "-10%",
-                  opacity: [0, 1, 0],
+                  opacity: [0, 0.5, 0],
                 }}
                 transition={{
                   duration,

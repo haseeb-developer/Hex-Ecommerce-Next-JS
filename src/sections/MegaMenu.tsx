@@ -193,9 +193,30 @@ export default function MegaMenu({
                 {/* Collections Section - Links Only */}
                 {collections.length > 0 && (
                   <div className="px-4 py-6 border-b border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-                      Collections
-                    </h3>
+                    <div className="relative mb-4 pb-2">
+                      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide relative z-10">
+                        Collections
+                      </h3>
+                      {/* Premium Animated Underline */}
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left"
+                        initial={{ scaleX: 0, opacity: 0 }}
+                        animate={{ scaleX: 1, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full" />
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"
+                          animate={{ x: ["-100%", "200%"] }}
+                          transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                        />
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full blur-[1px] opacity-30"
+                          animate={{ opacity: [0.2, 0.4, 0.2] }}
+                          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        />
+                      </motion.div>
+                    </div>
                     <ul className="space-y-1">
                       <motion.li
                         initial={{ opacity: 0, x: -10 }}
@@ -235,9 +256,30 @@ export default function MegaMenu({
                 {/* Pages Section - Mobile */}
                 {pages.length > 0 && (
                   <div className="px-4 py-6 border-b border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-                      Pages
-                    </h3>
+                    <div className="relative mb-4 pb-2">
+                      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide relative z-10">
+                        Pages
+                      </h3>
+                      {/* Premium Animated Underline */}
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left"
+                        initial={{ scaleX: 0, opacity: 0 }}
+                        animate={{ scaleX: 1, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full" />
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"
+                          animate={{ x: ["-100%", "200%"] }}
+                          transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                        />
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full blur-[1px] opacity-30"
+                          animate={{ opacity: [0.2, 0.4, 0.2] }}
+                          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        />
+                      </motion.div>
+                    </div>
                     <ul className="space-y-1">
                       {pages.map((page, index) => (
                         <motion.li
@@ -263,9 +305,30 @@ export default function MegaMenu({
                 {/* Fallback Pages if no Shopify pages */}
                 {pages.length === 0 && (
                   <div className="px-4 py-6 border-b border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-                      Pages
-                    </h3>
+                    <div className="relative mb-4 pb-2">
+                      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide relative z-10">
+                        Pages
+                      </h3>
+                      {/* Premium Animated Underline */}
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left"
+                        initial={{ scaleX: 0, opacity: 0 }}
+                        animate={{ scaleX: 1, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full" />
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"
+                          animate={{ x: ["-100%", "200%"] }}
+                          transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                        />
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full blur-[1px] opacity-30"
+                          animate={{ opacity: [0.2, 0.4, 0.2] }}
+                          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        />
+                      </motion.div>
+                    </div>
                     <ul className="space-y-1">
                       <motion.li
                         initial={{ opacity: 0, x: -10 }}
@@ -335,8 +398,8 @@ export default function MegaMenu({
             className="hidden lg:block fixed left-0 right-0 z-[60] px-5 transition-all duration-300 ease-out"
             style={{
               top: isAnnouncementBarVisible 
-                ? (isScrolled ? "220px" : "190px")
-                : (isScrolled ? "120px" : "80px"),
+                ? (isScrolled ? "220px" : "186px")
+                : (isScrolled ? "120px" : "90px"),
             }}
           >
             <motion.div
@@ -356,17 +419,51 @@ export default function MegaMenu({
                 boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)"
               }}
             >
-              <div className="w-full overflow-y-auto" style={{ maxHeight: "calc(100vh - 220px)" }}>
+              <div className="w-full mega-menu-scroll-container" style={{ maxHeight: "calc(100vh - 220px)" }}>
                 <div className="px-8 md:px-12 py-8 md:py-10">
                   {/* Desktop Layout - Advanced Grid with Tabs */}
                   <div className="grid grid-cols-12 gap-6">
                     {/* Collections Section - Left (Tabs) */}
                     {collections.length > 0 && (
                       <div className="col-span-2">
-                        <div className="flex items-center justify-between mb-6 pb-2 border-b border-gray-300">
-                          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                        <div className="flex items-center justify-between mb-6 pb-2 relative">
+                          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider relative z-10">
                             Collections
                           </h3>
+                          {/* Premium Animated Underline */}
+                          <motion.div
+                            className="absolute bottom-0 left-0 right-0 h-[2px] origin-left"
+                            initial={{ scaleX: 0, opacity: 0 }}
+                            animate={{ scaleX: 1, opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            {/* Base gradient line - lighter */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full" />
+                            {/* Animated shimmer overlay */}
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"
+                              animate={{
+                                x: ["-100%", "200%"],
+                              }}
+                              transition={{
+                                repeat: Infinity,
+                                duration: 3,
+                                ease: "linear",
+                              }}
+                            />
+                            {/* Glow effect - lighter */}
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full blur-[1px] opacity-30"
+                              animate={{
+                                opacity: [0.2, 0.4, 0.2],
+                              }}
+                              transition={{
+                                repeat: Infinity,
+                                duration: 2,
+                                ease: "easeInOut",
+                              }}
+                            />
+                          </motion.div>
                         </div>
                         <ul className="space-y-1">
                           <motion.li
@@ -596,9 +693,45 @@ export default function MegaMenu({
 
                     {/* Pages Section - Right */}
                     <div className="col-span-2">
-                      <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-6 pb-2 border-b border-gray-300">
-                        Pages
-                      </h3>
+                      <div className="relative mb-6 pb-2">
+                        <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider relative z-10">
+                          Pages
+                        </h3>
+                        {/* Premium Animated Underline */}
+                        <motion.div
+                          className="absolute bottom-0 left-0 right-0 h-[2px] origin-left"
+                          initial={{ scaleX: 0, opacity: 0 }}
+                          animate={{ scaleX: 1, opacity: 1 }}
+                          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          {/* Base gradient line - lighter */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full" />
+                          {/* Animated shimmer overlay */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"
+                            animate={{
+                              x: ["-100%", "200%"],
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 3,
+                              ease: "linear",
+                            }}
+                          />
+                          {/* Glow effect - lighter */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 rounded-full blur-[1px] opacity-30"
+                            animate={{
+                              opacity: [0.2, 0.4, 0.2],
+                            }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 2,
+                              ease: "easeInOut",
+                            }}
+                          />
+                        </motion.div>
+                      </div>
                       {pages.length > 0 ? (
                         <ul className="space-y-3">
                           {pages.slice(0, 8).map((page, index) => (
